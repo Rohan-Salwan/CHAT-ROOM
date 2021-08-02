@@ -2,8 +2,9 @@ import threading
 import socket
 
 HOST = ''
-PORT = 1231
+PORT = 1274
 name=input('ENTER YOUR NAME PLZ')
+print("IF YOU WANNA SWITCH TO PRIVATE CHAT ENTER '/PRIVATECHAT' BELOW")
 s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('connected to server')
@@ -15,7 +16,7 @@ def reciever(connection):
             if data=='KICKED':
                 break
             else:
-                print(data)
+                print(data,'%')
         except:
             connection.close()
             break
@@ -27,7 +28,10 @@ def sender(connectionn):
             i+=1
         else:
             message=input('')
-            message=name+':  '+message
+            if message=='/PRIVATECHAT':
+                pass
+            else:
+                message=name+':  '+message
         connectionn.sendall(message.encode('ascii'))
 reciever_thread=threading.Thread(target=reciever, args=(s,))
 reciever_thread.start()
