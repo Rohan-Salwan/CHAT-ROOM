@@ -2,25 +2,61 @@ import threading
 import socket
 
 HOST=''
-PORT=1274
+PORT=1260
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST,PORT))
 server.listen()
 print('CHATROOM SERVER IS ACTIVATED')
 clients=[]
 names=[]
-solo=None
 def listner(server):
     while True:
         conn, addr=server.accept()
         print('CONNECTED TO', addr)
         clients.append(conn)
-        message='YOU HAVE JOINDED THE CHATROOM'
-        conn.sendall(message.encode('ascii'))
+        conn.sendall('YOU HAVE JOINDED THE CHATROOM'.encode('ascii'))
         name=conn.recv(1024)
-        names.append(name.decode())
-        t=threading.Thread(target=reciever, args=(conn,))
-        t.start()
+        name=name.decode()
+        altering=name.split(':  ')
+        name=altering[0]
+        names.append(name)
+        decision=altering[1]
+        if decision=='/PRIVATECHAT':
+            conn.sendall('SELECT TNE NAME FROM LIST WHOME TOU WANNA CHAT PRIVATE AND TYPE IT'.encode('ascii'))
+            for name in names:
+                conn.sendall(name.encode('ascii'))
+            dataa=conn.recv(1024)    
+            dataa=dataa.decode()
+            dataa=dataa.split(':  ')
+            recievername=dataa[1]
+            sendername=dataa[0]
+            a=names.index(recievername)
+            recieversocket=clients[a]
+            msgg=sendername+'USER REQUEST YOU FOR PRIVATECHAT ENTER /YES OR /NO PLZ'
+            recieversocket.sendall(msgg.encode('ascii'))
+            while True:
+                dataa=recieversocket.recv(1024)
+                dataa=dataa.decode()
+                dataa=dataa.split(':  ')
+                dataa=dataa[1]
+                if dataa=='/YES':
+                    conn.sendall('YOUR PRIVATE CHAT REQUEST IS ACCEPTED'.encode('ascii'))
+                    conn.sendall('YOU HAVE JOINED PRRIVATE CHAT MODE'.encode('ascii'))
+                    recieversocket.sendall('YOU HAVE JOINED PRRIVATE CHAT MODE'.encode('ascii'))
+                    while True:
+                        solo1=threading.Thread(target=AR, args=(conn,recieversocket))
+                        solo1.start()
+                        solo2=threading.Thread(target=AR, args=(recieversocket,conn))
+                        solo2.start()
+                elif dataa=='/NO':
+                    break
+                else:
+                    recieversocket.sendall('WRONG INPUT ONLY /YES OR /NO INPUT CAN BE PASS'.encode('ascii'))
+        elif decision=='/PUBLICCHAT':
+            ta=threading.Thread(target=reciever, args=(conn,))
+            ta.start()
+        else:
+            pass
 
 def broadcast(message,ex):
     for client in clients:
@@ -29,58 +65,25 @@ def broadcast(message,ex):
         else:
             client.sendall(message)
 
-def solochat(smsg,helper):
-    helper.sendall(smsg)
+def AR(sender,reciever):
+    while True:
+        try:
+            dataaa=sender.recv(1024)
+            reciever.sendall(dataaa)
+        except:
+            sender.close()
+            break
 
 def reciever(connection):
     while True:
         try:
             data=connection.recv(1024)
-            if data.decode()=='/PRIVATECHAT':
-                for name in names:
-                    connection.sendall(name.encode('ascii'))
-                connection.sendall('[SELECT THE USER FROM LIST & ENTER THE NAME PLZ]'.encode('ascii'))
-                solodata=connection.recv(1024)
-                solodata=solodata.decode()
-                solodata=solodata.split(':  ')
-                solodata=solodata[1]
-                ab=names.index(solodata)
-                recieverclient=clients[ab]
-                ss=clients.index(connection)
-                sendername=names[ss]
-                sendername=sendername+'  REQUESTED YOU FOR PRIVATE CHAT TYPE YES OR NO'
-                recieverclient.sendall(sendername.encode('ascii'))
-                while True:
-                    de=recieverclient.recv(1024)
-                    de=de.decode()
-                    de=de.split(':  ')
-                    de=de[1]
-                    if de =='YES':
-                        connection.sendall('YOUR PRIVATE CHAT REQUEST IS ACCEPTED'.encode('ascii'))
-                        #connection.sendall('YOU ARE NOW CONNECTED WITH'+solodata+'IN PRIVATE CHAT'.encode('ascii'))
-                        recieverclient.sendall('YOU ARE NOW CONNECTED WITH IN PRIVATE CHAT'.encode('ascii'))
-                        solo='/PRIVATECHAT'
-                        break
-                    elif de=='NO':
-                        connection.sendall('YOUR PRIVATE CHAT REQUEST IS DECLINED BY'+solodata.encode('ascii'))
-                        solo =None
-                        break
-                    else:
-                        recieverclient.sendall('[WRONG INPUT] ONLY YES OR NO INPUTS ARE ALLOWED TO PASS'.encode('ascii'))
-                        recieverclient.sendall(sendername+'REQUESTED YOU FOR PRIVATE CHAT TYPE YES OR NO')
-            if solo=='/PRIVATECHAT':
-                try:
-                    recieverclient.sendall(data)
-                except:
-                    connection.close()
-                    break
-            else:
-                try:
-                    x=clients.index(connection)
-                    broadcast(data,connection)
-                except:
-                    connection.close()
-                    break
+            try:
+                x=clients.index(connection)
+                broadcast(data,connection)
+            except:
+                connection.close()
+                break
         except:
             connection.close()
             break

@@ -2,9 +2,11 @@ import threading
 import socket
 
 HOST = ''
-PORT = 1274
+PORT = 1260
 name=input('ENTER YOUR NAME PLZ')
-print("IF YOU WANNA SWITCH TO PRIVATE CHAT ENTER '/PRIVATECHAT' BELOW")
+print('CHATROOM HAS THREE MODES [/PRIVATECHAT, /GROUPCHAT, /PUBLICCHAT]')
+print('SELECT THE CHATMODE AND TYPE IT DOWN PLEASE')
+chatmode = input('')
 s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('connected to server')
@@ -16,7 +18,7 @@ def reciever(connection):
             if data=='KICKED':
                 break
             else:
-                print(data,'%')
+                print(data)
         except:
             connection.close()
             break
@@ -24,14 +26,11 @@ def sender(connectionn):
     i=0
     while True:
         if i==0:
-            message=name
+            message=name+':  '+chatmode
             i+=1
         else:
             message=input('')
-            if message=='/PRIVATECHAT':
-                pass
-            else:
-                message=name+':  '+message
+            message=name+':  '+message
         connectionn.sendall(message.encode('ascii'))
 reciever_thread=threading.Thread(target=reciever, args=(s,))
 reciever_thread.start()
