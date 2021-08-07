@@ -2,11 +2,8 @@ import threading
 import socket
 
 HOST = ''
-PORT = 1260
+PORT = 1275
 name=input('ENTER YOUR NAME PLZ')
-print('CHATROOM HAS THREE MODES [/PRIVATECHAT, /GROUPCHAT, /PUBLICCHAT]')
-print('SELECT THE CHATMODE AND TYPE IT DOWN PLEASE')
-chatmode = input('')
 s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('connected to server')
@@ -26,11 +23,14 @@ def sender(connectionn):
     i=0
     while True:
         if i==0:
-            message=name+':  '+chatmode
+            message=name
             i+=1
         else:
             message=input('')
-            message=name+':  '+message
+            if message=='/PRIVATECHAT':
+                pass
+            else:
+                message=name+':  '+message
         connectionn.sendall(message.encode('ascii'))
 reciever_thread=threading.Thread(target=reciever, args=(s,))
 reciever_thread.start()
