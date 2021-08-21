@@ -2,11 +2,12 @@ import threading
 import socket
 
 HOST = ''
-PORT = 1275
+PORT = 1409
 name=input('ENTER YOUR NAME PLZ')
 s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 print('connected to server')
+
 def reciever(connection):
     while True:    
         try:
@@ -19,6 +20,7 @@ def reciever(connection):
         except:
             connection.close()
             break
+
 def sender(connectionn):
     i=0
     while True:
@@ -28,6 +30,8 @@ def sender(connectionn):
         else:
             message=input('')
             if message=='/PRIVATECHAT':
+                pass
+            elif message=='/YES':
                 pass
             else:
                 message=name+':  '+message

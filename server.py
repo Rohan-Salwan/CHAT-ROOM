@@ -2,28 +2,69 @@ import threading
 import socket
 
 HOST=''
-PORT=1275
+PORT=1409
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST,PORT))
-server.listen()
 print('CHATROOM SERVER IS ACTIVATED')
-clients=[]
-names=[]
+Public_clients=[]
+Private_clients=[]
+Public_names=[]
+Private_names=[]
 kill_thread=False
-recieversocket=None
-def listner(server):
+class node:
+    def __init__(self,x,z):
+        self.sock=x
+        self.alt=z
+
+def Main(server,Public_clients,Private_clients):
+    Public_Chat_Thread=threading.Thread(target=Public_Chat, args=(Public_clients,))
+    Public_Chat_Thread.start()
+    Private_Chat_Thread=threading.Thread(target=Private_Chat, args=(Private_clients,))
+    Private_Chat_Thread.start()
     while True:
+        server.listen()
         conn, addr=server.accept()
         print('CONNECTED TO', addr)
-        clients.append(conn)
+        Public_clients.append(conn)
         conn.sendall('YOU HAVE JOINDED THE CHATROOM'.encode('ascii'))
         name=conn.recv(1024)
-        names.append(name.decode())
-        ta=threading.Thread(target=reciever, args=(conn,))
-        ta.start()
+        Public_names.append(name.decode())
+
+def Public_Chat(Public_clients):
+    t=0
+    while True:
+        if len(Public_clients)<1:
+            pass
+        elif t == len(Public_clients):
+            pass
+        else:
+            sock = Public_clients[t]
+            ta=threading.Thread(target=reciever, args=(sock,))
+            ta.start()
+            t+=1
+
+def Private_Chat(Private_clients):
+    v=0
+    while True:
+        if len(Private_clients)<1:
+            pass
+        elif v == len(Private_clients):
+            pass
+        else:
+            obj = Private_clients[v]
+            while True:
+                if obj.alt not in Public_clients:
+                    f1=threading.Thread(target=AR, args=(obj.alt, obj.sock,))
+                    f1.start()
+                    f2=threading.Thread(target=AR, args=(obj.sock, obj.alt,))
+                    f2.start()
+                    v+=1
+                    break
+                else:
+                    pass
 
 def broadcast(message,ex):
-    for client in clients:
+    for client in Public_clients:
         if client==ex:
             pass
         else:
@@ -41,7 +82,7 @@ def AR(sender,reciever):
 def reciever(connection):
     while True:
         try:
-            if kill_thread==True and recieversocket!=None:
+            if kill_thread==True:
                 kill_thread=False
                 break
         except:
@@ -49,39 +90,32 @@ def reciever(connection):
                 data=connection.recv(1024)
                 if data.decode()=='/PRIVATECHAT':
                     connection.sendall('SELECT TNE NAME FROM LIST WHOME TOU WANNA CHAT PRIVATE AND TYPE IT'.encode('ascii'))
-                    for name in names:
+                    for name in Public_names:
                         connection.sendall(name.encode('ascii'))
                     dataa=connection.recv(1024)
                     dataa=dataa.decode()
                     dataa=dataa.split(':  ')
                     recievername=dataa[1]
                     sendername=dataa[0]
-                    a=names.index(recievername)
-                    recieversocket=clients[a]
-                    msgg=sendername+'USER REQUEST YOU FOR PRIVATECHAT ENTER /YES OR /NO PLZ'
+                    a=Public_names.index(recievername)
+                    recieversocket=Public_clients[a]
+                    msgg=sendername+'USER REQUEST YOU FOR PRIVATECHAT ENTER /YES TO JOIN PRIVATECHAT'
                     recieversocket.sendall(msgg.encode('ascii'))
-                    while True:
-                        dataa=recieversocket.recv(1024)
-                        dataa=dataa.decode()
-                        dataa=dataa.split(':  ')
-                        dataa=dataa[1]
-                        if dataa=='/YES':
-                            connection.sendall('YOUR PRIVATE CHAT REQUEST IS ACCEPTED'.encode('ascii'))
-                            connection.sendall('YOU HAVE JOINED PRRIVATE CHAT MODE'.encode('ascii'))
-                            recieversocket.sendall('YOU HAVE JOINED PRRIVATE CHAT MODE'.encode('ascii'))
-                            solo1=threading.Thread(target=AR, args=(connection,recieversocket))
-                            solo1.start()
-                            solo2=threading.Thread(target=AR, args=(recieversocket,connection))
-                            solo2.start()
-                            kill_thread=True
-                            break
-                        elif dataa=='/NO':
-                            break
-                        else:
-                            recieversocket.sendall('WRONG INPUT ONLY /YES OR /NO INPUT CAN BE PASS'.encode('ascii'))
+                    Private_names.append(sendername)
+                    connectio=node(connection,recieversocket)
+                    Private_clients.append(connectio)
+                    Public_clients.remove(connection)
+                    Public_names.remove(sendername)
+                    kill_thread=True
+                elif data.decode()=='/YES':
+                    k=Public_clients.index(connection)
+                    name=Public_names[k]
+                    Public_clients.remove(connection)
+                    Public_names.remove(name)
+                    kill_thread=True
                 else:
                     try:
-                        x=clients.index(connection)
+                        x=Public_clients.index(connection)
                         broadcast(data,connection)
                     except:
                         connection.close()
@@ -93,21 +127,22 @@ def kick():
     while True:
         decison=input('If you want to display user list press 0 and if you want to kick user press 1')
         if decison=='0':
-            for name in names:
+            for name in Public_names:
                 print(name)
         elif decison=='1':
             print('USERS LIST')
-            for name in names:
+            for name in Public_names:
                 print(name)
             n=input('Wanna kick user ENTER THE NAME PLZ')
-            index=names.index(n)
-            con=clients[index]
+            index=Public_names.index(n)
+            con=Public_clients[index]
             msg='USER '+n+' IS KICKED BY CHAT ROOM ADMIN'
             broadcast(msg.encode('ascii'),con)
-            names.remove(n)
-            clients.remove(con)
+            Public_names.remove(n)
+            Public_clients.remove(con)
             msg='KICKED'
             con.sendall(msg.encode('ascii'))
+
 t=threading.Thread(target=kick)
 t.start()
-listner(server)
+Main(server,Public_clients,Private_clients)
