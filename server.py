@@ -2,9 +2,10 @@ import threading
 import socket
 
 HOST=''
-PORT=1409
+PORT=1416
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST,PORT))
+server.listen()
 print('CHATROOM SERVER IS ACTIVATED')
 Public_clients=[]
 Private_clients=[]
@@ -17,31 +18,17 @@ class node:
         self.alt=z
 
 def Main(server,Public_clients,Private_clients):
-    Public_Chat_Thread=threading.Thread(target=Public_Chat, args=(Public_clients,))
-    Public_Chat_Thread.start()
     Private_Chat_Thread=threading.Thread(target=Private_Chat, args=(Private_clients,))
     Private_Chat_Thread.start()
     while True:
-        server.listen()
         conn, addr=server.accept()
         print('CONNECTED TO', addr)
         Public_clients.append(conn)
         conn.sendall('YOU HAVE JOINDED THE CHATROOM'.encode('ascii'))
         name=conn.recv(1024)
         Public_names.append(name.decode())
-
-def Public_Chat(Public_clients):
-    t=0
-    while True:
-        if len(Public_clients)<1:
-            pass
-        elif t == len(Public_clients):
-            pass
-        else:
-            sock = Public_clients[t]
-            ta=threading.Thread(target=reciever, args=(sock,))
-            ta.start()
-            t+=1
+        ta=threading.Thread(target=reciever, args=(conn,))
+        ta.start()
 
 def Private_Chat(Private_clients):
     v=0

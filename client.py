@@ -2,7 +2,7 @@ import threading
 import socket
 
 HOST = ''
-PORT = 1409
+PORT = 1416
 name=input('ENTER YOUR NAME PLZ')
 s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
