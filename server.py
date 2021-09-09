@@ -2,7 +2,7 @@ import threading
 import socket
 
 HOST=''
-PORT=1416
+PORT=1417
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST,PORT))
 server.listen()
@@ -66,6 +66,25 @@ def AR(sender,reciever):
             sender.close()
             break
 
+def permission(connection):
+    connection.sendall('SELECT TNE NAME FROM LIST WHOME TOU WANNA CHAT PRIVATE AND TYPE IT'.encode('ascii'))
+    for name in Public_names:
+        connection.sendall(name.encode('ascii'))
+    dataa=connection.recv(1024)
+    dataa=dataa.decode()
+    dataa=dataa.split(':  ')
+    recievername=dataa[1]
+    sendername=dataa[0]
+    a=Public_names.index(recievername)
+    recieversocket=Public_clients[a]
+    msgg=sendername+'USER REQUEST YOU FOR PRIVATECHAT ENTER /YES TO JOIN PRIVATECHAT'
+    recieversocket.sendall(msgg.encode('ascii'))
+    Private_names.append(sendername)
+    connectio=node(connection,recieversocket)
+    Private_clients.append(connectio)
+    Public_clients.remove(connection)
+    Public_names.remove(sendername)
+
 def reciever(connection):
     while True:
         try:
@@ -76,23 +95,7 @@ def reciever(connection):
             try:
                 data=connection.recv(1024)
                 if data.decode()=='/PRIVATECHAT':
-                    connection.sendall('SELECT TNE NAME FROM LIST WHOME TOU WANNA CHAT PRIVATE AND TYPE IT'.encode('ascii'))
-                    for name in Public_names:
-                        connection.sendall(name.encode('ascii'))
-                    dataa=connection.recv(1024)
-                    dataa=dataa.decode()
-                    dataa=dataa.split(':  ')
-                    recievername=dataa[1]
-                    sendername=dataa[0]
-                    a=Public_names.index(recievername)
-                    recieversocket=Public_clients[a]
-                    msgg=sendername+'USER REQUEST YOU FOR PRIVATECHAT ENTER /YES TO JOIN PRIVATECHAT'
-                    recieversocket.sendall(msgg.encode('ascii'))
-                    Private_names.append(sendername)
-                    connectio=node(connection,recieversocket)
-                    Private_clients.append(connectio)
-                    Public_clients.remove(connection)
-                    Public_names.remove(sendername)
+                    permission(connection)
                     kill_thread=True
                 elif data.decode()=='/YES':
                     k=Public_clients.index(connection)
