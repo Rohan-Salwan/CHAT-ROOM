@@ -1,42 +1,69 @@
-import threading
-import socket
-
-HOST = ''
-PORT = 1417
-name=input('ENTER YOUR NAME PLZ')
-s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-print('connected to server')
-
-def reciever(connection):
-    while True:    
-        try:
-            data=connection.recv(1024)
-            data=data.decode()
-            if data=='KICKED':
+from loading_modules import loading_modules
+class client:
+    def __init__(self):
+        
+        # loading all neccessary modules which is required to start client
+        modules=loading_modules()
+        
+        HOST = ''
+        # Asking user to enter port number please
+        while True:
+            try:
+                print('[YOU NEED TO ENTER THE PORT NUMBER TO CONNECT WITH CHAT ROOM SERVER]....TYPE IT PLEASE')
+                PORT = int(input())
                 break
-            else:
-                print(data)
-        except:
-            connection.close()
-            break
+            except:
+                print('INVALID INPUT')
+        
+        # asking full name from user
+        self.name=input('ENTER YOUR NAME PLZ')
+        
+        # building a client socket
+        sock=modules.socket.socket(modules.socket.AF_INET, modules.socket.SOCK_STREAM)
 
-def sender(connectionn):
-    i=0
-    while True:
-        if i==0:
-            message=name
-            i+=1
-        else:
-            message=input('')
-            if message=='/PRIVATECHAT':
-                pass
-            elif message=='/YES':
-                pass
+        # trying to connect client socket with server
+        try:
+            sock.connect((HOST, PORT))
+        except:
+            print('NOT ABLE TO CONNECT WITH SERVER[Connection Failed]')
+
+        print('[CONNECTED TO CHAT-ROOM SERVER]........')
+        
+        # creating reciever and sender threads for client
+        Client_reciever_thread=modules.threading.Thread(target=self.reciever, args=(sock,))
+        Client_reciever_thread.start()
+        Client_sender_thread=modules.threading.Thread(target=self.sender, args=(sock,))
+        Client_sender_thread.start()
+
+    # reciever method use for recieving messages form chat room server and run along with sender method with the help of threading framework.
+    def reciever(self,connection):
+        while True:    
+            try:
+                data=connection.recv(1024)
+                data=data.decode()
+                if data=='KICKED':
+                    break
+                else:
+                    print(data)
+            except:
+                connection.close()
+                break
+
+    # sender method use for sending messages to chat room server and run along with reciever method with the help of threading framework.
+    def sender(self,connectionn):
+        i=0
+        while True:
+            if i==0:
+                message=self.name
+                i+=1
             else:
-                message=name+':  '+message
-        connectionn.sendall(message.encode('ascii'))
-reciever_thread=threading.Thread(target=reciever, args=(s,))
-reciever_thread.start()
-sender_thread=threading.Thread(target=sender, args=(s,))
-sender_thread.start()
+                message=input('')
+                if message=='/PRIVATECHAT':
+                    pass
+                elif message=='/YES':
+                    pass
+                else:
+                    message=self.name+':  '+message
+            connectionn.sendall(message.encode('ascii'))
+
+User_client = client()

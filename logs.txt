@@ -1,0 +1,12 @@
+hey bro2021-09-15 08:23:19,468 ERROR __main__ division by zero
+2021-09-15 08:25:22,833 ERROR __main__ <traceback object at 0x7fae6bd78f80>
+2021-09-15 08:26:25,189 ERROR __main__ <traceback object at 0x7f268a34e140>
+2021-09-15 08:27:46,759 ERROR __main__ <traceback object at 0x7ff08c3ad040>
+2021-09-15 08:32:21,769 ERROR __main__ None
+2021-09-15 08:32:43,388 ERROR __main__ None
+2021-09-15 08:33:10,637 ERROR __main__ division by zero
+2021-09-15 09:42:51,473 ERROR loading_modules 'module' object is not callable
+2021-09-15 09:42:51,478 ERROR loading_modules 'module' object is not callable
+2021-09-15 09:42:51,478 ERROR loading_modules 'module' object is not callable
+2021-09-15 09:42:51,479 ERROR loading_modules 'module' object is not callable
+2021-09-15 09:42:51,480 ERROR loading_modules 'module' object is not callable
