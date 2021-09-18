@@ -40,11 +40,12 @@ class client:
         while True:    
             try:
                 data=connection.recv(1024)
-                data=data.decode()
-                if data=='KICKED':
+                if data.decode()=='KICKED':
+                    break
+                elif data.decode()=='/EXIT':
                     break
                 else:
-                    print(data)
+                    print(data.decode())
             except:
                 connection.close()
                 break
@@ -61,6 +62,8 @@ class client:
                 if message=='/PRIVATECHAT':
                     pass
                 elif message=='/YES':
+                    pass
+                elif message=='/EXIT':
                     pass
                 else:
                     message=self.name+':  '+message

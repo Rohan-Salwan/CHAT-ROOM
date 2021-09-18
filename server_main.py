@@ -1,6 +1,6 @@
  
 from loading_modules import loading_modules
-from server_low_level_interface import low_interface_of_server
+from server_core import low_interface_of_server
 
 class server:
     def __init__(self):
@@ -31,7 +31,7 @@ class server:
     def start(self):
         self.intialize_server = low_interface_of_server(self.server,self.HOST,self.PORT)
 
-    # stop method is for pause the server
+    # stop method is use to pause server
     def stop(self):
         pass
 
@@ -48,6 +48,8 @@ def core():
         if de=='1':
             room=server()
             room.start()
-        else:
+        elif de=='0':
             break
+        else:
+            print('Invalid Input')
 core()

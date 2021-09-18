@@ -150,6 +150,14 @@ class low_interface_of_server:
                         self.Public_clients.remove(connection)
                         self.Public_names.remove(name)
                         kill_thread=True
+                    elif data.decode()=='/EXIT':
+                        connection.sendall('/EXIT'.encode('ascii'))
+                        index=self.Public_clients.index(connection)
+                        del_name=self.Public_names[index]
+                        self.Public_names.remove(del_name)
+                        self.Public_clients.remove(connection)
+                        connection.close()
+                        kill_thread=True
                     else:
                         try:
                             x=self.Public_clients.index(connection)
