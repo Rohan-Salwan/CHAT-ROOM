@@ -2,6 +2,12 @@ from loading_modules import loading_modules
 class client:
     def __init__(self):
         
+        self.passing_key_words = {'/PRIVATECHAT': "", '/YES': ""}
+
+        self.breaking_keywords = {'KICKED': ""}
+
+        self.connection_closed = False
+
         # loading all neccessary modules which is required to start client
         modules=loading_modules()
         
@@ -40,9 +46,8 @@ class client:
         while True:    
             try:
                 data=connection.recv(1024)
-                if data.decode()=='KICKED':
-                    break
-                elif data.decode()=='/EXIT':
+                if data.decode() in self.breaking_keywords:
+                    self.connection_closed = True
                     break
                 else:
                     print(data.decode())
@@ -52,21 +57,16 @@ class client:
 
     # sender method use for sending messages to chat room server and run along with reciever method with the help of threading framework.
     def sender(self,connectionn):
-        i=0
+        connectionn.sendall(self.name.encode('ascii'))
         while True:
-            if i==0:
-                message=self.name
-                i+=1
+            message = input('')
+            if message == '/EXIT' or self.connection_closed:
+                connectionn.sendall('/EXIT'.encode('ascii'))
+                connectionn.close()
+                break
             else:
-                message=input('')
-                if message=='/PRIVATECHAT':
-                    pass
-                elif message=='/YES':
-                    pass
-                elif message=='/EXIT':
-                    pass
-                else:
-                    message=self.name+':  '+message
-            connectionn.sendall(message.encode('ascii'))
+                if message not in self.passing_key_words:
+                    message = self.name+':  '+message
+                connectionn.sendall(message.encode('ascii'))
 
 User_client = client()

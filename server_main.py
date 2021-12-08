@@ -9,7 +9,7 @@ class server:
         self.Modules=loading_modules()
         
         # HOST variable will store the ip address where server will be run
-        self.HOST=''
+        self.HOST = ''
 
         # asking a port number from user
         while True:
@@ -44,11 +44,11 @@ class server:
 def core():
     while True:
         print('[ENTER 1 FOR STARTING CHAT-ROOM SERVER AND 0 FOR EXIT]....TYPE IT PLEASE')
-        de=input()
-        if de=='1':
+        user_decision = input()
+        if user_decision == '1':
             room=server()
             room.start()
-        elif de=='0':
+        elif user_decision == '0':
             break
         else:
             print('Invalid Input')
