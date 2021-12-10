@@ -128,8 +128,8 @@ class low_interface_of_server:
         
         # filling private chat clients sockets and names to arrays
         self.Private_names.append(sendername)
-        connection = node(connection, recieversocket)
-        self.Private_clients.append(connection)
+        new_connection = node(connection, recieversocket)
+        self.Private_clients.append(new_connection)
         self.Public_clients.remove(connection)
         self.Public_names.remove(sendername)
 

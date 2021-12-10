@@ -1,9 +1,9 @@
  
 from loading_modules import loading_modules
 from server_core import low_interface_of_server
-
+from client import Client
 class server:
-    def __init__(self):
+    def __init__(self, test_port = None):
         
         # loading all neccessary modules which is required to start chatroom server
         self.Modules = loading_modules()
@@ -12,13 +12,11 @@ class server:
         self.HOST = ''
 
         # asking a port number from user
-        while True:
-            try:
-                print('[CHAT ROOM SERVER NEEDS PORT NUMBER TO RUN]...TYPE IT PLEASE')
-                self.PORT = int(input())
-                break
-            except Exception as e:
-                print('Invalid Input')
+        print('[CHAT ROOM SERVER NEEDS PORT NUMBER TO RUN]...TYPE IT PLEASE')
+        if not test_port:
+            self.PORT = Client.Obtaining_UserInput(Client, Type=int)
+        else:
+            self.PORT = test_port
 
         # building a socket
         try:
@@ -52,4 +50,3 @@ def core():
             break
         else:
             print('Invalid Input')
-core()
