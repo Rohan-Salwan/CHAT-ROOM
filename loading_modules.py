@@ -7,17 +7,17 @@ class loading_modules:
 
         try:
             import logging
-            self.logging=logging
-            self.logging.basicConfig(filename='logs.txt', level=logging.DEBUG, 
-                format='%(asctime)s %(levelname)s %(name)s %(message)s')
-            self.logger=self.logging.getLogger(__name__)
+            self.logging = logging
+            self.logging.basicConfig(filename = 'logs.txt', level = logging.DEBUG,
+                format = '%(asctime)s %(levelname)s %(name)s %(message)s')
+            self.logger = self.logging.getLogger(__name__)
         except Exception as e:
             print('logging module import error')
 
         # threading module is going to be import to speed up server service.
         try:
             import threading
-            self.threading=threading
+            self.threading = threading
         except Exception as e:
             self.logger.error(e)
             print('threading module Import error')
@@ -25,7 +25,7 @@ class loading_modules:
         # socket module is going to be import for connection establishment and communication.
         try:
             import socket
-            self.socket=socket
+            self.socket = socket
         except Exception as e:
             self.logger.error(e)
             print('socket module Import error')
@@ -33,7 +33,7 @@ class loading_modules:
         # os module is going to be import for making directories and changing location and searching directories and accessing files.
         try: 
             import os
-            self.os=os
+            self.os = os
         except Exception as e:
             self.logger.error(e)
             print('os module Import error')
@@ -41,7 +41,7 @@ class loading_modules:
         # sys Module is going to be import for system operations
         try:
             import sys
-            self.sys=sys
+            self.sys = sys
         except Exception as e:
             self.logger.error(e)
             print('sys module Import error')
@@ -49,7 +49,7 @@ class loading_modules:
         # time module is going to be import for calculating time and displaying time and for other stuff too.
         try:
             import time
-            self.time=time
+            self.time = time
         except Exception as e:
             self.logger.error(e)
             print('time module Import error')

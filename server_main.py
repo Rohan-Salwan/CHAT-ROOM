@@ -6,7 +6,7 @@ class server:
     def __init__(self):
         
         # loading all neccessary modules which is required to start chatroom server
-        self.Modules=loading_modules()
+        self.Modules = loading_modules()
         
         # HOST variable will store the ip address where server will be run
         self.HOST = ''
@@ -22,14 +22,14 @@ class server:
 
         # building a socket
         try:
-            self.server=self.Modules.socket.socket(self.Modules.socket.AF_INET, self.Modules.socket.SOCK_STREAM)
+            self.server = self.Modules.socket.socket(self.Modules.socket.AF_INET, self.Modules.socket.SOCK_STREAM)
         except Exception as e:
             self.Modules.logger.error(e)
             print(e)
     
     # start method will start the server
     def start(self):
-        self.intialize_server = low_interface_of_server(self.server,self.HOST,self.PORT)
+        self.intialize_server = low_interface_of_server(self.server, self.HOST, self.PORT)
 
     # stop method is use to pause server
     def stop(self):
@@ -46,8 +46,8 @@ def core():
         print('[ENTER 1 FOR STARTING CHAT-ROOM SERVER AND 0 FOR EXIT]....TYPE IT PLEASE')
         user_decision = input()
         if user_decision == '1':
-            room=server()
-            room.start()
+            Chat_Room = server()
+            Chat_Room.start()
         elif user_decision == '0':
             break
         else:
