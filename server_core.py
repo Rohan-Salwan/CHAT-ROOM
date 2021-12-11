@@ -7,7 +7,9 @@ class node:
 
 class low_interface_of_server:
     def __init__(self, server, HOST, PORT, test=None):
+
         self.modules=loading_modules()
+
         # socket bind method will bind the host with port 
         server.bind((HOST,PORT))
         
@@ -75,8 +77,8 @@ class low_interface_of_server:
                         break
     
     # broadcast method will broadcast all messages from client to all other public clients.
-    def broadcast(self, message, ex):
-        for client in self.Public_clients:
+    def broadcast(self, message, ex, Public_clients):
+        for client in Public_clients:
             if client == ex:
                 pass
             else:
@@ -154,8 +156,8 @@ class low_interface_of_server:
                 connection.close()
                 break
             else:
-                self.broadcast(data, connection)
-    
+                self.broadcast(data, connection, self.Public_clients)
+
     # kick method is a feature for server side admin so if admin want to kick any user so it can kick with
     # the help of kick method which will be constantly in working because of thread framework.   
     def kick(self):
@@ -173,11 +175,11 @@ class low_interface_of_server:
                 # it will also ask about name from admin whome admin want to kick out.
                 Dumping_Name = input('Wanna kick user ENTER THE NAME PLZ')
                 index = self.Public_names.index(Dumping_Name)
-                
+
                 # retrieving socket from array with th help of index
                 con = self.Public_clients[index]
                 con.sendall('KICKED'.encode('ascii'))
 
                 # broadcasting kicked message to all connected public chat users
                 msg = 'USER '+Dumping_Name+' IS KICKED BY CHAT ROOM ADMIN'
-                self.broadcast(msg.encode('ascii'), con)
+                self.broadcast(msg.encode('ascii'), con, self.Public_clients)
