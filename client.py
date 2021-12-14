@@ -44,7 +44,7 @@ class Client:
             Client_sender_thread = modules.threading.Thread(target=self.sender, args=(self.sock,))
             Client_sender_thread.start()
 
-    # Getting_Input_From_User method get information from user according to its Type parameter.
+    # Obtaing_UserInput method get information from user according to its Type parameter.
     def Obtaining_UserInput(self, Type=None):
         while True:
             try:
