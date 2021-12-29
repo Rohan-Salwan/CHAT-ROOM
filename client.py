@@ -80,3 +80,8 @@ class Client:
                 if message not in self.passing_key_words:
                     message = self.name+':  '+message
                 connectionn.sendall(message.encode('ascii'))
+def Core():
+    try:
+        client=Client()
+    except Exception as e:
+        print("Error Occured in Client Module")

@@ -11,7 +11,7 @@ class Chat_Room:
 
     def Start_Client(self, ACTIVATE_CLIENT):
         if ACTIVATE_CLIENT == "activate":
-            return client.Client()
+            return client.Core()
         else:
             return "Run python3 Call.py - -- --help for more information about commands"
 
