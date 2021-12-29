@@ -57,7 +57,6 @@ class low_interface_of_server:
 
     def Private_Chat(self):
         v = 0
-        
         # this loop is going to check private client list that any one is in queue for private chat
         # or not so according to that it will create private chat threads. 
         while True:
@@ -66,7 +65,6 @@ class low_interface_of_server:
             else:
                 # obj variable will collect the client who requested for private chat.
                 obj = self.Private_clients[v]
-                
                 while True:
                     if obj.alt not in self.Public_clients:
                         private_thread = self.modules.threading.Thread(target = self.Private_chat_Reciever, args = (obj.alt, obj.sock,))
@@ -132,8 +130,7 @@ class low_interface_of_server:
         self.Private_names.append(sendername)
         new_connection = node(connection, recieversocket)
         self.Private_clients.append(new_connection)
-        self.Public_clients.remove(connection)
-        self.Public_names.remove(sendername)
+        self.Delete_User(sendername,connection)
 
     # Public_chat_reciever method use to recieve messages from public chat users and deliever it to other users.
     def Public_chat_reciever(self, connection):
@@ -145,18 +142,20 @@ class low_interface_of_server:
             elif data.decode() == '/YES':
                 index = self.Public_clients.index(connection)
                 name = self.Public_names[index]
-                self.Public_clients.remove(connection)
-                self.Public_names.remove(name)
+                self.Delete_User(name,connection)
                 break
             elif data.decode() == '/EXIT':
                 index = self.Public_clients.index(connection)
                 del_name = self.Public_names[index]
-                self.Public_names.remove(del_name)
-                self.Public_clients.remove(connection)
+                self.Delete_User(del_name,connection)
                 connection.close()
                 break
             else:
                 self.broadcast(data, connection, self.Public_clients)
+
+    def Delete_User(self,name,client):
+        self.Public_names.remove(name)
+        self.Public_clients.remove(client)
 
     # kick method is a feature for server side admin so if admin want to kick any user so it can kick with
     # the help of kick method which will be constantly in working because of thread framework.   
